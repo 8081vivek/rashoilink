@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Track Your Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 50px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .track-order-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #ee0979;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #d4086d;
+    }
+
+    .order-status {
+      margin-top: 25px;
+      font-size: 16px;
+      color: #555;
+      text-align: center;
+      min-height: 40px;
+    }
+
+    .status-delivered {
+      color: green;
+      font-weight: bold;
+    }
+    .status-shipped {
+      color: orange;
+      font-weight: bold;
+    }
+    .status-pending {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="track-order-container">
+    <h2>Track Your Order</h2>
+    <input type="text" id="orderNumber" placeholder="Enter your Order Number" />
+    <button onclick="trackOrder()">Track</button>
+
+    <div class="order-status" id="orderStatus"></div>
+  </div>
+
+  <script>
+    // Demo order data (usually this would come from a server)
+    const orders = {
+      "12345": "Delivered",
+      "67890": "Shipped",
+      "54321": "Pending",
+      "98765": "Delivered",
+      "11111": "Shipped"
+    };
+
+    function trackOrder() {
+      const orderInput = document.getElementById('orderNumber').value.trim();
+      const statusDiv = document.getElementById('orderStatus');
+
+      if (!orderInput) {
+        statusDiv.textContent = "Please enter a valid order number.";
+        statusDiv.className = "order-status status-pending";
+        return;
+      }
+
+      const status = orders[orderInput];
+
+      if (!status) {
+        statusDiv.textContent = "Order not found. Please check your order number.";
+        statusDiv.className = "order-status status-pending";
+        return;
+      }
+
+      statusDiv.textContent = `Order Status: ${status}`;
+
+      if (status === "Delivered") {
+        statusDiv.className = "order-status status-delivered";
+      } else if (status === "Shipped") {
+        statusDiv.className = "order-status status-shipped";
+      } else {
+        statusDiv.className = "order-status status-pending";
+      }
+    }
+  </script>
+</body>
+</html>

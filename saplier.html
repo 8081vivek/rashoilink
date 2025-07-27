@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Supplier Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6f0ff; /* light blue background */
+        }
+
+        header {
+            background: #ff4da6; /* Pink Header */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        nav {
+            width: 220px;
+            height: 100vh;
+            position: fixed;
+            background: #004080; /* Dark Blue Nav */
+            padding-top: 20px;
+            color: white;
+            box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+        }
+
+        nav a {
+            display: block;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            background-color: #0059b3;
+            transition: 0.3s;
+        }
+
+        main {
+            margin-left: 220px;
+            padding: 25px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            color: #004080;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        
+        th {
+            background-color: #cce0ff;
+        }
+        
+        button {
+            padding: 6px 12px;
+            background-color: #ff4da6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e60073;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Supplier Dashboard
+</header>
+
+<nav>
+    <a href="#" onclick="showSection('orders')">📦 View Orders</a>
+    <a href="#" onclick="showSection('products')">🧾 My Products</a>
+    <a href="#" onclick="showSection('add')">➕ Add New Product</a>
+    <a href="#" onclick="showSection('stock')">📊 Stock</a>
+    <a href="#" onclick="showSection('payments')">💰 Payments</a>
+</nav>
+
+<main>
+    <div id="orders" class="card">
+        <h3>Recent Orders</h3>
+        <table>
+            <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>#101</td>
+                <td>Paneer Tikka</td>
+                <td>Pending</td>
+                <td><button onclick="alert('Order Confirmed')">Confirm</button></td>
+            </tr>
+            <tr>
+                <td>#102</td>
+                <td>Chole Bhature</td>
+                <td>Shipped</td>
+                <td><button disabled>Shipped</button></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="products" class="card" style="display: none;">
+        <h3>My Products</h3>
+        <ul>
+            <li>Paneer Tikka - ₹150</li>
+            <li>Chole Bhature - ₹120</li>
+            <li>Masala Dosa - ₹90</li>
+        </ul>
+    </div>
+
+    <div id="add" class="card" style="display: none;">
+        <h3>Add New Product</h3>
+        <form onsubmit="addProduct(event)">
+            <label>Product Name:</label><br>
+            <input type="text" id="pname" required><br>
+            <label>Price: ₹</label><br>
+            <input type="number" id="pprice" required><br><br>
+            <button type="submit">Add Product</button>
+        </form>
+        <p id="addMsg" style="color: green;"></p>
+    </div>
+
+    <div id="stock" class="card" style="display: none;">
+        <h3>Stock Management</h3>
+        <p>Paneer Tikka - 10 left</p>
+        <p>Chole Bhature - 5 left</p>
+        <p>Masala Dosa - 8 left</p>
+    </div>
+
+    <div id="payments" class="card" style="display: none;">
+        <h3>Payments</h3>
+        <table>
+            <tr>
+                <th>Order ID</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>#101</td>
+                <td>₹150</td>
+                <td>Paid</td>
+            </tr>
+            <tr>
+                <td>#102</td>
+                <td>₹120</td>
+                <td>Pending</td>
+            </tr>
+        </table>
+    </div>
+</main>
+
+<script>
+    function showSection(id) {
+        let cards = document.querySelectorAll('.card');
+        cards.forEach(card => card.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function addProduct(event) {
+        event.preventDefault();
+        let name = document.getElementById('pname').value;
+        let price = document.getElementById('pprice').value;
+        document.getElementById('addMsg').innerText = `✅ Product "${name}" added at ₹${price}.`;
+        document.getElementById('pname').value = "";
+        document.getElementById('pprice').value = "";
+    }
+</script>
+
+</body>
+</html>

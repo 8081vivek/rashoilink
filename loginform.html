@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 50px 20px;
+    }
+
+    section {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      height: 4px;
+      width: 80px;
+      background: #ee0979;
+      margin: 10px auto 0;
+      border-radius: 10px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    button {
+      padding: 12px;
+      font-size: 16px;
+      background-color: #ee0979;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: #d4086d;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .buttons a {
+      text-decoration: none;
+      color: white;
+      display: block;
+      text-align: center;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <h2 class="section-title">Vendors Login</h2>
+    <form id="loginForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter your email" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter your password" required />
+
+      <div class="buttons">
+        <button type="submit">Login</button>
+        <button><a href="ragistration_form.html">Register</a></button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ✅ JavaScript Login Backend -->
+  <script>
+    // Fake data (replace with real DB/API logic)
+    const users = [
+      { email: "vp3472716@gmail.com", password: "123456" },
+      { email: "jyoti@gmail.com", password: "123456" }
+    ];
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault(); // prevent form reload
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const found = users.find(
+        user => user.email === email && user.password === password
+      );
+
+      if (found) {
+        alert("Login successful!");
+        window.location.href = "vendordash.html";
+      } else {
+        alert("Invalid email or password!");
+      }
+    });
+  </script>
+</body>
+</html>

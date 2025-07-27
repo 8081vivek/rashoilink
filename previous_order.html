@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendor Dashboard - Previous Orders</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f7;
+      padding: 0;
+    }
+
+    header {
+      background: #ff5722;
+      padding: 1rem;
+      color: white;
+      text-align: center;
+      font-size: 1.6rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .order-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .card {
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 260px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      color: #ff5722;
+      margin: 0 0 5px;
+    }
+
+    .card p {
+      margin: 5px 0;
+      color: #333;
+    }
+
+    .card .actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .actions button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #2196f3;
+    }
+
+    .delete-btn {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+
+  <header>RasoiLink - Previous Orders</header>
+
+  <div class="container">
+    <h2>Previous Orders</h2>
+    <div class="order-box" id="orderBox">
+      <!-- Cards will appear here -->
+    </div>
+  </div>
+
+  <script>
+    const previousOrders = [
+      { category: 'Vegetables', item: 'Tomato', quantity: '10kg' },
+      { category: 'Fruits', item: 'Apple', quantity: '5kg' },
+      { category: 'Grains', item: 'Wheat', quantity: '20kg' }
+    ];
+
+    function renderOrders() {
+      const box = document.getElementById('orderBox');
+      box.innerHTML = '';
+      previousOrders.forEach((order, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${order.item}</h3>
+          <p><strong>Category:</strong> ${order.category}</p>
+          <p><strong>Quantity:</strong> ${order.quantity}</p>
+          <div class="actions">
+            <button class="edit-btn" onclick="editOrder(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteOrder(${index})">Delete</button>
+          </div>
+        `;
+        box.appendChild(card);
+      });
+    }
+
+    function editOrder(index) {
+      const order = previousOrders[index];
+      const newQuantity = prompt(`Update quantity for ${order.item}:`, order.quantity);
+      if (newQuantity !== null && newQuantity.trim() !== "") {
+        previousOrders[index].quantity = newQuantity;
+        renderOrders();
+      }
+    }
+
+    function deleteOrder(index) {
+      if (confirm("Are you sure you want to delete this order?")) {
+        previousOrders.splice(index, 1);
+        renderOrders();
+      }
+    }
+
+    window.onload = renderOrders;
+  </script>
+
+</body>
+</html>

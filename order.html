@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Tracking - RasoiLink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f8f8;
+      color: #333;
+    }
+
+    header {
+      background: #ff5722;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    #map {
+      height: 350px;
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .status-line {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .status-line::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 4px;
+      background: #ddd;
+      z-index: 0;
+    }
+
+    .step {
+      background: #ccc;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      z-index: 1;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+    }
+
+    .step.active {
+      background: #4caf50;
+    }
+
+    .info-box h3 {
+      margin-bottom: 10px;
+      color: #ff5722;
+    }
+
+    .info-box p {
+      margin: 6px 0;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .btn-cancel {
+      background: #f44336;
+    }
+
+    .btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .status-line {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .step {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>🛒 Track Your Order - RasoiLink</header>
+
+  <div class="container">
+    <div id="map"></div>
+
+    <div class="status-line">
+      <div class="step active" id="step1">1</div>
+      <div class="step" id="step2">2</div>
+      <div class="step" id="step3">3</div>
+      <div class="step" id="step4">4</div>
+    </div>
+
+    <div class="info-box">
+      <h3>Order Details</h3>
+      <p><strong>Status:</strong> <span id="statusText">Ordered</span></p>
+      <p><strong>ETA:</strong> <span id="eta">35 mins</span></p>
+      <p><strong>Delivery Location:</strong> Sector 22, Lucknow</p>
+      <p><strong>Agent:</strong> Vivek Singh</p>
+      <p><strong>Contact:</strong> <a href="tel:+918989898989">+91-8989898989</a></p>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="downloadSlip()">📄 Download Order Slip</button>
+      <button class="btn btn-cancel" onclick="cancelOrder()" id="cancelBtn">❌ Cancel Order</button>
+    </div>
+  </div>
+
+  <script>
+    let map;
+    let status = 1; // 1-Ordered, 2-Packed, 3-On the way, 4-Delivered
+    let cancelled = false;
+
+    function initMap() {
+      const destination = { lat: 26.8467, lng: 80.9462 }; // Lucknow location
+      const deliveryGuy = { lat: 26.8435, lng: 80.9420 };
+
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: destination
+      });
+
+      new google.maps.Marker({
+        position: destination,
+        map,
+        title: "Delivery Location",
+        animation: google.maps.Animation.DROP
+      });
+
+      new google.maps.Marker({
+        position: deliveryGuy,
+        map,
+        icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        title: "Delivery Agent"
+      });
+    }
+
+    function cancelOrder() {
+      if (status < 3 && !cancelled) {
+        alert("Your order has been cancelled.");
+        cancelled = true;
+        document.getElementById("cancelBtn").disabled = true;
+        document.getElementById("statusText").innerText = "Cancelled";
+        document.getElementById("eta").innerText = "-";
+        updateSteps(0);
+      } else {
+        alert("Sorry, order cannot be cancelled at this stage.");
+      }
+    }
+
+    function updateSteps(step) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`step${i}`);
+        if (i <= step) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
+      }
+    }
+
+    function downloadSlip() {
+      const content = `
+        Order ID: #RL983748
+        Status: ${cancelled ? 'Cancelled' : ['Ordered', 'Packed', 'On the way', 'Delivered'][status - 1]}
+        ETA: ${cancelled ? '-' : document.getElementById("eta").innerText}
+        Location: Sector 22, Lucknow
+        Delivery Agent: Vivek Singh
+        Contact: +91-8989898989
+      `;
+      const blob = new Blob([content], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Order-Slip.pdf";
+      link.click();
+    }
+
+    // Auto update order status
+    setInterval(() => {
+      if (status < 4 && !cancelled) {
+        status++;
+        updateSteps(status);
+        document.getElementById("statusText").innerText = ['Ordered', 'Packed', 'On the way', 'Delivered'][status - 1];
+        if (status === 4) document.getElementById("cancelBtn").disabled = true;
+      }
+    }, 10000); // Every 10 sec change status
+
+  </script>
+
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+  </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RasoiLink Vendor Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ff5722;
+      color: white;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    section {
+      padding: 20px;
+      margin: 10px auto;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #ff5722;
+    }
+
+    input, select, button, textarea {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background: #ff5722;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #e64a19;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    #map {
+      width: 100%;
+      height: 250px;
+      margin: 1rem 0;
+      border-radius: 10px;
+    }
+
+    .vendor-feature-boxes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .feature-box {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 10px;
+      width: 280px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .feature-box img {
+      width: 60px;
+      margin-bottom: 10px;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .notification {
+      background: #e0f7fa;
+      padding: 10px;
+      border-left: 4px solid #00796b;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>RasoiLink Vendor Dashboard</header>
+
+  <!-- Order Placement -->
+  <section>
+    <h2>Place Order</h2>
+    <div class="row">
+      <div class="col">
+        <input type="text" placeholder="Your Name" id="custName">
+        <select id="item">
+          <option value="">Select Item</option>
+
+          <optgroup label="🥦 Vegetables">
+            <option value="Tomatoes">🍅 Tomatoes</option>
+            <option value="Potatoes">🥔 Potatoes</option>
+            <option value="Onions">🧅 Onions</option>
+            <option value="Carrots">🥕 Carrots</option>
+            <option value="Spinach">🥬 Spinach</option>
+          </optgroup>
+
+          <optgroup label="🍎 Fruits">
+            <option value="Apples">🍎 Apples</option>
+            <option value="Bananas">🍌 Bananas</option>
+            <option value="Mangoes">🥭 Mangoes</option>
+            <option value="Grapes">🍇 Grapes</option>
+            <option value="Papayas">🍈 Papayas</option>
+          </optgroup>
+
+          <optgroup label="🌾 Grains & Pulses">
+            <option value="Rice">🍚 Rice</option>
+            <option value="Wheat Flour">🌾 Wheat Flour</option>
+            <option value="Lentils">🫘 Lentils</option>
+            <option value="Chickpeas">🥣 Chickpeas</option>
+            <option value="Kidney Beans">🍛 Kidney Beans</option>
+          </optgroup>
+
+          <optgroup label="🥛 Dairy & Eggs">
+            <option value="Milk">🥛 Milk</option>
+            <option value="Cheese">🧀 Cheese</option>
+            <option value="Yogurt">🍶 Yogurt</option>
+            <option value="Butter">🧈 Butter</option>
+            <option value="Eggs">🥚 Eggs</option>
+          </optgroup>
+        </select>
+        <input type="number" id="qty" placeholder="Quantity (kg)">
+      </div>
+      <div class="col">
+        <textarea id="location" placeholder="Enter Delivery Location"></textarea>
+        <button class="btn" onclick="getLocation()">Use My Location</button>
+      </div>
+    </div>
+    <button class="btn" onclick="placeOrder()">Place Order</button>
+    <div id="map"></div>
+  </section>
+
+  <!-- Notifications -->
+  <section>
+    <h2>Order Notifications</h2>
+    <div class="notification" id="notifArea">
+      No updates yet.
+    </div>
+  </section>
+
+  <!-- Track Order -->
+  <section>
+    <h2>Track Your Order</h2>
+    <p>Current Location: <strong id="trackLocation">Pending...</strong></p>
+    <p>Estimated Delivery Time: <strong id="deliveryTime">Calculating...</strong></p>
+    <button class="btn" onclick="startTracking()">Start Tracking</button>
+  </section>
+
+  <!-- Order Slip -->
+  <section>
+    <h2>Order Slip</h2>
+    <div id="slipBox">
+      <p><strong>Name:</strong> <span id="sName">-</span></p>
+      <p><strong>Item:</strong> <span id="sItem">-</span></p>
+      <p><strong>Quantity:</strong> <span id="sQty">-</span></p>
+      <p><strong>Location:</strong> <span id="sLoc">-</span></p>
+    </div>
+    <button class="btn" onclick="downloadPDF()">Download Slip (PDF)</button>
+    <button class="btn" onclick="cancelOrder()">Cancel Order</button>
+  </section>
+
+  <!-- Previous Orders -->
+  <section>
+    <h2>Previous Orders</h2>
+    <ul id="previousOrders">
+      <li>No orders yet.</li>
+    </ul>
+  </section>
+
+  <!-- Vendor Feature Section -->
+  <section>
+    <h2>How RasoiLink Helps Vendors</h2>
+    <div class="vendor-feature-boxes">
+      <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/1906/1906534.png" alt="Place Order">
+        <h3>Place Orders Easily</h3>
+        <p>Select daily raw materials and place orders in just a few clicks.</p>
+      </div>
+      <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/10049/10049587.png" alt="Track Delivery">
+        <h3>Track Deliveries</h3>
+        <p>Get live updates and delivery status notifications with Google Maps.</p>
+      </div>
+      <div class="feature-box">
+        <img src="https://cdn-icons-png.flaticon.com/512/566/566738.png" alt="Previous Orders">
+        <h3>Previous Orders</h3>
+        <p>Review past orders and reorder quickly.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let orderPlaced = false;
+    let shipped = false;
+
+    function placeOrder() {
+      const name = document.getElementById("custName").value;
+      const item = document.getElementById("item").value;
+      const qty = document.getElementById("qty").value;
+      const loc = document.getElementById("location").value;
+
+      if (!name || !item || !qty || !loc) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      document.getElementById("sName").textContent = name;
+      document.getElementById("sItem").textContent = item;
+      document.getElementById("sQty").textContent = qty;
+      document.getElementById("sLoc").textContent = loc;
+      document.getElementById("notifArea").innerHTML = "✅ Order Confirmed! Waiting for shipment...";
+      document.getElementById("previousOrders").innerHTML += `<li>${item} (${qty}kg) to ${loc}</li>`;
+      orderPlaced = true;
+
+      setTimeout(() => {
+        shipped = true;
+        document.getElementById("notifArea").innerHTML += "<br>📦 Order Shipped!";
+      }, 5000);
+    }
+
+    function cancelOrder() {
+      if (!orderPlaced) return alert("No order placed yet!");
+      if (shipped) return alert("Cannot cancel, order already shipped!");
+      orderPlaced = false;
+      document.getElementById("notifArea").innerHTML = "❌ Order Cancelled.";
+    }
+
+    function startTracking() {
+      if (!orderPlaced) return alert("No active order.");
+      document.getElementById("trackLocation").textContent = "Driver is on the way!";
+      document.getElementById("deliveryTime").textContent = "20-30 mins approx.";
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const mapFrame = `<iframe width="100%" height="250" style="border-radius:10px;" src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"></iframe>`;
+          document.getElementById("location").value = `Lat: ${lat}, Lng: ${lng}`;
+          document.getElementById("map").innerHTML = mapFrame;
+        }, function(error) {
+          alert("Location access denied. Please enter manually.");
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+
+    function downloadPDF() {
+      const name = document.getElementById("sName").textContent;
+      const item = document.getElementById("sItem").textContent;
+      const qty = document.getElementById("sQty").textContent;
+      const loc = document.getElementById("sLoc").textContent;
+      const content = `Order Slip\nName: ${name}\nItem: ${item}\nQty: ${qty}\nLocation: ${loc}`;
+      const blob = new Blob([content], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "OrderSlip.pdf";
+      link.click();
+    }
+  </script>
+</body>
+</html>
